@@ -58,13 +58,21 @@ class PskFrontend():
 	
 	def new_client(self, s1):
 		try:
-			ssl_sock = sslpsk.wrap_socket(s1,
-				server_side = True,
-				ssl_version=ssl.PROTOCOL_TLSv1_2,
-				ciphers='PSK-AES128-CBC-SHA256',
-				psk=lambda identity: gen_psk(identity, self.hint),
-				hint=self.hint)
+			#ssl_sock = sslpsk.wrap_socket(s1,
+			#	server_side = True,
+			#	ssl_version=ssl.PROTOCOL_TLSv1_2,
+			#	ciphers='PSK-AES128-CBC-SHA256',
+			#	psk=lambda identity: gen_psk(identity, self.hint),
+			#	hint=self.hint)
 
+			context = sslpsk.SSLContext(ssl.PROTOCOL_TLSv1_2)
+
+			context.set_ciphers('PSK-AES128-CBC-SHA256')
+			context.psk = lambda identity: gen_psk(identity, self.hint)
+			context.hint = self.hint
+
+			ssl_sock = context.wrap_socket(s1, server_side=True)
+			
 			s2 = client(self.host, self.port)
 			self.sessions.append((ssl_sock, s2))
 		except ssl.SSLError as e:
