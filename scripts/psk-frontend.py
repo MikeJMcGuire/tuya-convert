@@ -65,7 +65,7 @@ class PskFrontend():
 			#	psk=lambda identity: gen_psk(identity, self.hint),
 			#	hint=self.hint)
 
-			context = sslpsk.SSLContext(ssl.PROTOCOL_TLSv1_2)
+			context = ssl.SSLContext(ssl.PROTOCOL_TLSv1_2)
 
 			context.set_ciphers('PSK-AES128-CBC-SHA256')
 			context.psk = lambda identity: gen_psk(identity, self.hint)
